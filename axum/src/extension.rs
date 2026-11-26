@@ -1,14 +1,15 @@
 use crate::{extract::rejection::*, response::IntoResponseParts};
+use alloc::format;
 use axum_core::extract::OptionalFromRequestParts;
 use axum_core::{
     extract::FromRequestParts,
     response::{IntoResponse, Response, ResponseParts},
 };
-use http::{request::Parts, Extensions, Request};
-use std::{
+use core::{
     convert::Infallible,
     task::{Context, Poll},
 };
+use http::{request::Parts, Extensions, Request};
 use tower_service::Service;
 
 /// Extractor and response for extensions.
@@ -91,7 +92,7 @@ where
         Ok(Self::from_extensions(&req.extensions).ok_or_else(|| {
             MissingExtension::from_err(format!(
                 "Extension of type `{}` was not found. Perhaps you forgot to add it? See `axum::Extension`.",
-                std::any::type_name::<T>()
+                core::any::type_name::<T>()
             ))
         })?)
     }
@@ -192,6 +193,8 @@ mod tests {
     use crate::routing::get;
     use crate::test_helpers::TestClient;
     use crate::Router;
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
     use http::StatusCode;
 
     #[derive(Clone)]

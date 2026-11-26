@@ -89,6 +89,8 @@ mod tests {
     use crate::test_helpers::*;
     use crate::Json;
     use crate::{routing::get, Router};
+    use alloc::string::String;
+    use alloc::vec::Vec;
     use axum_core::response::ForceStatusCode;
     use axum_core::response::{
         IntoResponse, IntoResponseFailed, IntoResponseParts, Response, ResponseParts,

@@ -1,10 +1,13 @@
 use super::{ErrorKind, PathDeserializationError};
 use crate::util::PercentDecodedStr;
+use alloc::borrow::ToOwned as _;
+use alloc::string::ToString as _;
+use alloc::sync::Arc;
+use core::any::type_name;
 use serde_core::{
     de::{self, DeserializeSeed, EnumAccess, Error, MapAccess, SeqAccess, VariantAccess, Visitor},
     forward_to_deserialize_any, Deserializer,
 };
-use std::{any::type_name, sync::Arc};
 
 macro_rules! unsupported_type {
     ($trait_fn:ident) => {
@@ -647,8 +650,11 @@ impl<'de> KeyOrIdx<'de> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::string::String;
+    use alloc::vec::Vec;
     use serde::Deserialize;
     use std::collections::HashMap;
+    use std::vec;
 
     #[derive(Debug, Deserialize, Eq, PartialEq)]
     enum MyEnum {

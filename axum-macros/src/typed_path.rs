@@ -116,17 +116,17 @@ fn expand_named_fields(
 
     let display_impl = quote_spanned! {path.span()=>
         #[automatically_derived]
-        impl ::std::fmt::Display for #ident {
+        impl ::core::fmt::Display for #ident {
             #[allow(clippy::unnecessary_to_owned)]
             #[allow(clippy::implicit_clone)]
-            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 let Self { #(#captures,)* } = self;
                 write!(
                     f,
                     #format_str,
                     #(
                         #captures = ::axum_extra::__private::utf8_percent_encode(
-                            &#captures.to_string(),
+                            &ToString::to_string(#captures),
                             ::axum_extra::__private::PATH_SEGMENT,
                         )
                     ),*
@@ -149,7 +149,7 @@ fn expand_named_fields(
             async fn from_request_parts(
                 parts: &mut ::axum::http::request::Parts,
                 state: &S,
-            ) -> ::std::result::Result<Self, Self::Rejection> {
+            ) -> ::core::result::Result<Self, Self::Rejection> {
                 <::axum::extract::Path<#ident> as ::axum::extract::FromRequestParts<S>>
                     ::from_request_parts(parts, state)
                     .await
@@ -222,17 +222,17 @@ fn expand_unnamed_fields(
 
     let display_impl = quote_spanned! {path.span()=>
         #[automatically_derived]
-        impl ::std::fmt::Display for #ident {
+        impl ::core::fmt::Display for #ident {
             #[allow(clippy::unnecessary_to_owned)]
             #[allow(clippy::implicit_clone)]
-            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 let Self { #(#destructure_self)* } = self;
                 write!(
                     f,
                     #format_str,
                     #(
                         #captures = ::axum_extra::__private::utf8_percent_encode(
-                            &#captures.to_string(),
+                            &ToString::to_string(#captures),
                             ::axum_extra::__private::PATH_SEGMENT,
                         )
                     ),*
@@ -255,7 +255,7 @@ fn expand_unnamed_fields(
             async fn from_request_parts(
                 parts: &mut ::axum::http::request::Parts,
                 state: &S,
-            ) -> ::std::result::Result<Self, Self::Rejection> {
+            ) -> ::core::result::Result<Self, Self::Rejection> {
                 ::axum::extract::Path::from_request_parts(parts, state)
                     .await
                     .map(|path| path.0)
@@ -305,8 +305,8 @@ fn expand_unit_fields(
 
     let display_impl = quote_spanned! {path.span()=>
         #[automatically_derived]
-        impl ::std::fmt::Display for #ident {
-            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        impl ::core::fmt::Display for #ident {
+            fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
                 write!(f, #path)
             }
         }
@@ -319,7 +319,7 @@ fn expand_unit_fields(
     };
     let create_rejection = if let Some(rejection) = &rejection {
         quote! {
-            Err(<#rejection as ::std::default::Default>::default())
+            Err(<#rejection as ::core::default::Default>::default())
         }
     } else {
         quote! {
@@ -338,8 +338,8 @@ fn expand_unit_fields(
             fn from_request_parts(
                 parts: &mut ::axum::http::request::Parts,
                 _state: &S,
-            ) -> impl ::std::future::Future<Output = ::std::result::Result<Self, Self::Rejection>> {
-                ::std::future::ready(
+            ) -> impl ::core::future::Future<Output = ::core::result::Result<Self, Self::Rejection>> {
+                ::core::future::ready(
                     if parts.uri.path() == <Self as ::axum_extra::routing::TypedPath>::PATH {
                         Ok(Self)
                     } else {
@@ -514,7 +514,7 @@ fn map_err_rejection(rejection: Option<&syn::Path>) -> TokenStream {
             let path_rejection = path_rejection();
             quote! {
                 .map_err(|rejection| {
-                    <#rejection as ::std::convert::From<#path_rejection>>::from(rejection)
+                    <#rejection as ::core::convert::From<#path_rejection>>::from(rejection)
                 })
             }
         })

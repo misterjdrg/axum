@@ -5,11 +5,12 @@ use crate::extract::rejection::{InnerPathRejection, MissingPathParams};
 use crate::extract::FromRequestParts;
 use crate::routing::url_params::UrlParams;
 use crate::util::PercentDecodedStr;
+use alloc::string::ToString as _;
+use alloc::sync::Arc;
 use axum_core::extract::OptionalFromRequestParts;
 use axum_core::RequestPartsExt;
 use http::request::Parts;
 use serde_core::de::DeserializeOwned;
-use std::sync::Arc;
 
 /// Extractor that will get captures from the path of the innermost router
 /// and parse them using [`serde`].
@@ -216,6 +217,9 @@ mod tests {
         test_helpers::*,
         Router,
     };
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
+    use alloc::vec::Vec;
     use axum_core::response::Response;
     use http::StatusCode;
     use std::collections::HashMap;

@@ -2,9 +2,9 @@
 
 use crate::response::Response;
 use axum_core::extract::Request;
+use core::{convert::Infallible, future::Future, pin::Pin, task::Context};
 use futures_util::future::Map;
 use pin_project_lite::pin_project;
-use std::{convert::Infallible, future::Future, pin::Pin, task::Context};
 use tower::util::Oneshot;
 use tower_service::Service;
 
@@ -46,7 +46,7 @@ where
     type Output = Response;
 
     #[inline]
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> std::task::Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> core::task::Poll<Self::Output> {
         self.project().inner.poll(cx)
     }
 }

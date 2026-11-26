@@ -1,8 +1,8 @@
-use http::Method;
-use std::{
+use core::{
     fmt,
     fmt::{Debug, Formatter},
 };
+use http::Method;
 
 /// A filter that matches one or more HTTP methods.
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -85,7 +85,7 @@ impl fmt::Display for NoMatchingMethodFilter {
     }
 }
 
-impl std::error::Error for NoMatchingMethodFilter {}
+impl core::error::Error for NoMatchingMethodFilter {}
 
 impl TryFrom<Method> for MethodFilter {
     type Error = NoMatchingMethodFilter;
@@ -110,6 +110,7 @@ impl TryFrom<Method> for MethodFilter {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::string::ToString as _;
 
     #[test]
     fn from_http_method() {

@@ -1,18 +1,18 @@
 use super::{ForceStatusCode, IntoResponseFailed, IntoResponseParts, Response, ResponseParts};
 use crate::{body::Body, BoxError};
+use alloc::{borrow::Cow, boxed::Box, string::String, vec::Vec};
 use bytes::{buf::Chain, Buf, Bytes, BytesMut};
-use http::{
-    header::{self, HeaderMap, HeaderName, HeaderValue},
-    Extensions, StatusCode,
-};
-use http_body::{Frame, SizeHint};
-use std::{
-    borrow::Cow,
+use core::{
     convert::Infallible,
     fmt,
     pin::Pin,
     task::{Context, Poll},
 };
+use http::{
+    header::{self, HeaderMap, HeaderName, HeaderValue},
+    Extensions, StatusCode,
+};
+use http_body::{Frame, SizeHint};
 
 /// Trait for generating responses.
 ///

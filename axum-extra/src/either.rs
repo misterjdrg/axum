@@ -90,7 +90,7 @@
 //! [`BytesRejection`]: axum::extract::rejection::BytesRejection
 //! [`IntoResponse::into_response`]: https://docs.rs/axum/0.8/axum/response/index.html#returning-different-response-types
 
-use std::task::{Context, Poll};
+use core::task::{Context, Poll};
 
 use axum_core::{
     extract::FromRequestParts,

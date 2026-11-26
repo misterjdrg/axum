@@ -1,8 +1,11 @@
 use super::{rejection::*, FromRequestParts};
 use crate::routing::{RouteId, NEST_TAIL_PARAM_CAPTURE};
+use alloc::collections::BTreeMap;
+use alloc::format;
+use alloc::sync::Arc;
 use axum_core::extract::OptionalFromRequestParts;
+use core::convert::Infallible;
 use http::request::Parts;
-use std::{collections::HashMap, convert::Infallible, sync::Arc};
 
 /// Access the path in the router that matches the request.
 ///
@@ -100,7 +103,7 @@ struct MatchedNestedPath(Arc<str>);
 
 pub(crate) fn set_matched_path_for_request(
     id: RouteId,
-    route_id_to_path: &HashMap<RouteId, Arc<str>>,
+    route_id_to_path: &BTreeMap<RouteId, Arc<str>>,
     extensions: &mut http::Extensions,
 ) {
     let Some(matched_path) = route_id_to_path.get(&id) else {
@@ -150,6 +153,7 @@ mod tests {
         test_helpers::*,
         Router,
     };
+    use alloc::borrow::ToOwned;
     use http::StatusCode;
 
     #[crate::test]

@@ -1,5 +1,6 @@
 use crate::extract::Request;
 use crate::extract::{rejection::*, FromRequest, RawForm};
+use alloc::string::ToString as _;
 use axum_core::response::{IntoResponse, IntoResponseFailed, Response};
 use axum_core::RequestExt;
 use http::header::CONTENT_TYPE;
@@ -110,7 +111,9 @@ where
 {
     fn into_response(self) -> Response {
         // Extracted into separate fn so it's only compiled once for all T.
-        fn make_response(ser_result: Result<String, serde_html_form::ser::Error>) -> Response {
+        fn make_response(
+            ser_result: Result<alloc::string::String, serde_html_form::ser::Error>,
+        ) -> Response {
             match ser_result {
                 Ok(body) => (
                     [(CONTENT_TYPE, mime::APPLICATION_WWW_FORM_URLENCODED.as_ref())],

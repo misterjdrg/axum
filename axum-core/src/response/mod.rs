@@ -4,7 +4,7 @@
 //!
 //! [`axum::response`]: https://docs.rs/axum/0.8/axum/response/index.html
 
-use std::convert::Infallible;
+use core::convert::Infallible;
 
 use http::StatusCode;
 
@@ -103,7 +103,7 @@ pub type Response<T = Body> = http::Response<T>;
 ///     # unimplemented!()
 /// }
 /// ```
-pub type Result<T, E = ErrorResponse> = std::result::Result<T, E>;
+pub type Result<T, E = ErrorResponse> = core::result::Result<T, E>;
 
 impl<T> IntoResponse for Result<T>
 where

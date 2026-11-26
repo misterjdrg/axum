@@ -1,6 +1,6 @@
 use crate::extract::FromRequestParts;
+use core::future::Future;
 use http::request::Parts;
-use std::future::Future;
 
 mod sealed {
     pub trait Sealed {}
@@ -136,7 +136,9 @@ impl RequestPartsExt for Parts {
 
 #[cfg(test)]
 mod tests {
-    use std::convert::Infallible;
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
+    use core::convert::Infallible;
 
     use super::*;
     use crate::{

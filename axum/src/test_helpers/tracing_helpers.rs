@@ -6,6 +6,9 @@ use std::{
     sync::{Arc, Mutex},
 };
 
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::vec::Vec;
 use serde::{de::DeserializeOwned, Deserialize};
 use tracing::instrument::WithSubscriber;
 use tracing_subscriber::prelude::*;

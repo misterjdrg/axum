@@ -1,4 +1,5 @@
-use std::{any::type_name, fmt};
+use alloc::string::ToString as _;
+use core::{any::type_name, fmt};
 
 use super::sealed::Sealed;
 use http::Uri;
@@ -214,7 +215,7 @@ use serde_core::Serialize;
 /// [`Display`]: std::fmt::Display
 /// [`Deserialize`]: serde::Deserialize
 /// [`PathRejection`]: axum::extract::rejection::PathRejection
-pub trait TypedPath: std::fmt::Display {
+pub trait TypedPath: core::fmt::Display {
     /// The path with optional captures such as `/users/{id}`.
     const PATH: &'static str;
 
@@ -395,6 +396,7 @@ impl_second_element_is!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, 
 #[cfg(test)]
 mod tests {
     use crate::routing::TypedPath;
+    use alloc::{string::ToString, vec::Vec};
     use serde::{Deserialize, Serialize};
 
     #[derive(TypedPath, Deserialize)]

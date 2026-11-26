@@ -1,11 +1,11 @@
 use crate::response::Response;
 use axum_core::response::IntoResponse;
-use http::{Request, StatusCode};
-use std::{
+use core::{
     convert::Infallible,
     future::ready,
     task::{Context, Poll},
 };
+use http::{Request, StatusCode};
 use tower_service::Service;
 
 /// A [`Service`] that responds with `404 Not Found` to all requests.
@@ -21,7 +21,7 @@ where
 {
     type Response = Response;
     type Error = Infallible;
-    type Future = std::future::Ready<Result<Response, Self::Error>>;
+    type Future = core::future::Ready<Result<Response, Self::Error>>;
 
     #[inline]
     fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {

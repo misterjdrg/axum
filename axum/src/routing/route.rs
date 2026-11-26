@@ -5,18 +5,18 @@ use crate::{
 };
 use axum_core::{extract::Request, response::IntoResponse};
 use bytes::Bytes;
-use http::{
-    header::{self, CONTENT_LENGTH},
-    HeaderMap, HeaderValue, Method,
-};
-use pin_project_lite::pin_project;
-use std::{
+use core::{
     convert::Infallible,
     fmt,
     future::Future,
     pin::Pin,
     task::{ready, Context, Poll},
 };
+use http::{
+    header::{self, CONTENT_LENGTH},
+    HeaderMap, HeaderValue, Method,
+};
+use pin_project_lite::pin_project;
 use tower::{
     util::{BoxCloneSyncService, MapErrLayer, Oneshot},
     ServiceExt,
@@ -242,6 +242,7 @@ impl Future for InfallibleRouteFuture {
 mod tests {
     use super::*;
     use crate::{routing::get, test_helpers::*, Router};
+    use alloc::string::ToString as _;
 
     #[test]
     fn traits() {

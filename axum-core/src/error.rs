@@ -1,5 +1,5 @@
 use crate::BoxError;
-use std::{error::Error as StdError, fmt};
+use core::{error::Error as StdError, fmt};
 
 /// Errors that can happen when using axum.
 #[derive(Debug)]

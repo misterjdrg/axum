@@ -4,13 +4,16 @@ mod unknown;
 pub(crate) use unknown::Unknown;
 
 use crate::{BoxError, Error};
+use alloc::borrow::Cow;
+use alloc::string::String;
+use alloc::vec::Vec;
 use bytes::Bytes;
+use core::pin::Pin;
+use core::task::{ready, Context, Poll};
 use futures_core::{Stream, TryStream};
 use http_body::{Body as _, Frame};
 use http_body_util::BodyExt;
 use pin_project_lite::pin_project;
-use std::pin::Pin;
-use std::task::{ready, Context, Poll};
 use sync_wrapper::SyncWrapper;
 
 type BoxBody = http_body_util::combinators::UnsyncBoxBody<Bytes, Error>;
@@ -29,7 +32,7 @@ where
     K: Send + 'static,
 {
     let mut k = Some(k);
-    if let Some(k) = <dyn std::any::Any>::downcast_mut::<Option<T>>(&mut k) {
+    if let Some(k) = <dyn core::any::Any>::downcast_mut::<Option<T>>(&mut k) {
         Ok(k.take().unwrap())
     } else {
         Err(k.unwrap())
@@ -128,11 +131,11 @@ macro_rules! body_from_impl {
 }
 
 body_from_impl!(&'static [u8]);
-body_from_impl!(std::borrow::Cow<'static, [u8]>);
+body_from_impl!(Cow<'static, [u8]>);
 body_from_impl!(Vec<u8>);
 
 body_from_impl!(&'static str);
-body_from_impl!(std::borrow::Cow<'static, str>);
+body_from_impl!(Cow<'static, str>);
 body_from_impl!(String);
 
 body_from_impl!(Bytes);

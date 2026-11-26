@@ -1,6 +1,6 @@
+use alloc::boxed::Box;
 use axum_core::extract::{FromRequest, FromRequestParts, Request};
-use futures_core::future::BoxFuture;
-use std::{
+use core::{
     any::type_name,
     convert::Infallible,
     fmt,
@@ -9,6 +9,7 @@ use std::{
     pin::Pin,
     task::{Context, Poll},
 };
+use futures_core::future::BoxFuture;
 use tower::util::BoxCloneSyncService;
 use tower_layer::Layer;
 use tower_service::Service;
@@ -282,7 +283,7 @@ macro_rules! impl_service {
 
             fn call(&mut self, req: Request) -> Self::Future {
                 let not_ready_inner = self.inner.clone();
-                let ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
+                let ready_inner = core::mem::replace(&mut self.inner, not_ready_inner);
 
                 let mut f = self.f.clone();
                 let state = self.state.clone();
@@ -391,6 +392,8 @@ impl fmt::Debug for ResponseFuture {
 mod tests {
     use super::*;
     use crate::{body::Body, routing::get, Router};
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
     use http::{HeaderMap, StatusCode};
     use http_body_util::BodyExt;
     use tower::ServiceExt;

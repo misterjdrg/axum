@@ -1,6 +1,6 @@
 use crate::body::Body;
 use crate::extract::{DefaultBodyLimitKind, FromRequest, FromRequestParts, Request};
-use std::future::Future;
+use core::future::Future;
 
 mod sealed {
     pub trait Sealed {}
@@ -298,8 +298,8 @@ impl RequestExt for Request {
         *req.version_mut() = self.version();
         *req.method_mut() = self.method().clone();
         *req.uri_mut() = self.uri().clone();
-        *req.headers_mut() = std::mem::take(self.headers_mut());
-        *req.extensions_mut() = std::mem::take(self.extensions_mut());
+        *req.headers_mut() = core::mem::take(self.headers_mut());
+        *req.extensions_mut() = core::mem::take(self.extensions_mut());
         let (mut parts, ()) = req.into_parts();
 
         let result = E::from_request_parts(&mut parts, state).await;
@@ -307,8 +307,8 @@ impl RequestExt for Request {
         *self.version_mut() = parts.version;
         *self.method_mut() = parts.method.clone();
         *self.uri_mut() = parts.uri.clone();
-        *self.headers_mut() = std::mem::take(&mut parts.headers);
-        *self.extensions_mut() = std::mem::take(&mut parts.extensions);
+        *self.headers_mut() = core::mem::take(&mut parts.headers);
+        *self.extensions_mut() = core::mem::take(&mut parts.extensions);
 
         result
     }
@@ -339,6 +339,8 @@ mod tests {
         ext_traits::tests::{RequiresState, State},
         extract::FromRef,
     };
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
     use http::Method;
 
     #[tokio::test]

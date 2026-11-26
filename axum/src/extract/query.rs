@@ -92,6 +92,7 @@ mod tests {
     use crate::{routing::get, test_helpers::TestClient, Router};
 
     use super::*;
+    use alloc::string::String;
     use axum_core::{body::Body, extract::FromRequest};
     use http::{Request, StatusCode};
     use serde::Deserialize;

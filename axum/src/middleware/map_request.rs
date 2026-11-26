@@ -1,10 +1,9 @@
 use crate::body::{Body, Bytes, HttpBody};
 use crate::response::{IntoResponse, Response};
 use crate::BoxError;
+use alloc::boxed::Box;
 use axum_core::extract::{FromRequest, FromRequestParts};
-use futures_core::future::BoxFuture;
-use http::Request;
-use std::{
+use core::{
     any::type_name,
     convert::Infallible,
     fmt,
@@ -13,6 +12,8 @@ use std::{
     pin::Pin,
     task::{Context, Poll},
 };
+use futures_core::future::BoxFuture;
+use http::Request;
 use tower_layer::Layer;
 use tower_service::Service;
 
@@ -278,7 +279,7 @@ macro_rules! impl_service {
                 let req = req.map(Body::new);
 
                 let not_ready_inner = self.inner.clone();
-                let mut ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
+                let mut ready_inner = core::mem::replace(&mut self.inner, not_ready_inner);
 
                 let mut f = self.f.clone();
                 let state = self.state.clone();
@@ -389,6 +390,7 @@ impl<B> IntoMapRequestResult<B> for Request<B> {
 mod tests {
     use super::*;
     use crate::{routing::get, test_helpers::TestClient, Router};
+    use alloc::borrow::ToOwned as _;
     use http::{HeaderMap, StatusCode};
 
     #[crate::test]

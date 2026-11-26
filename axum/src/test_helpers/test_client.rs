@@ -1,9 +1,12 @@
 use super::{serve, Request, Response};
+use alloc::boxed::Box;
+use alloc::format;
+use alloc::string::String;
 use bytes::Bytes;
+use core::ops::Deref;
+use core::{convert::Infallible, future::IntoFuture, net::SocketAddr};
 use futures_core::future::BoxFuture;
 use http::header::{HeaderName, HeaderValue};
-use std::ops::Deref;
-use std::{convert::Infallible, future::IntoFuture, net::SocketAddr};
 use tokio::net::TcpListener;
 use tower::make::Shared;
 use tower_service::Service;
@@ -18,7 +21,7 @@ where
     let listener = TcpListener::from_std(std_listener).unwrap();
 
     let addr = listener.local_addr().unwrap();
-    println!("Listening on {addr}");
+    std::println!("Listening on {addr}");
 
     tokio::spawn(async move {
         serve(listener, Shared::new(svc)).await;

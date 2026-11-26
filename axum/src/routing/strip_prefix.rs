@@ -1,9 +1,8 @@
 use crate::routing::url_params;
+use alloc::format;
+use alloc::sync::Arc;
+use core::task::{Context, Poll};
 use http::{Request, Uri};
-use std::{
-    sync::Arc,
-    task::{Context, Poll},
-};
 use tower::Layer;
 use tower_layer::layer_fn;
 use tower_service::Service;
@@ -147,8 +146,8 @@ where
     I: Iterator,
     I2: Iterator<Item = I::Item>,
 {
-    let a = a.map(Some).chain(std::iter::repeat_with(|| None));
-    let b = b.map(Some).chain(std::iter::repeat_with(|| None));
+    let a = a.map(Some).chain(core::iter::repeat_with(|| None));
+    let b = b.map(Some).chain(core::iter::repeat_with(|| None));
     a.zip(b).map_while(|(a, b)| match (a, b) {
         (Some(a), Some(b)) => Some(Item::Both(a, b)),
         (Some(a), None) => Some(Item::First(a)),
@@ -231,6 +230,8 @@ enum Item<T> {
 mod tests {
     #[allow(unused_imports)]
     use super::*;
+    use alloc::string::String;
+    use alloc::string::ToString as _;
     use quickcheck::Arbitrary;
     use quickcheck_macros::quickcheck;
 

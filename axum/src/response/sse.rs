@@ -65,11 +65,7 @@ use axum_core::{
     response::{IntoResponse, Response},
 };
 use bytes::{BufMut, BytesMut};
-use futures_core::Stream;
-use futures_util::stream::TryStream;
-use http_body::Frame;
-use pin_project_lite::pin_project;
-use std::{
+use core::{
     fmt::{self, Write as _},
     io::Write as _,
     mem,
@@ -77,6 +73,10 @@ use std::{
     task::{ready, Context, Poll},
     time::Duration,
 };
+use futures_core::Stream;
+use futures_util::stream::TryStream;
+use http_body::Frame;
+use pin_project_lite::pin_project;
 use sync_wrapper::SyncWrapper;
 
 /// An SSE response
@@ -113,7 +113,7 @@ impl<S> Sse<S> {
 impl<S> fmt::Debug for Sse<S> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Sse")
-            .field("stream", &format_args!("{}", std::any::type_name::<S>()))
+            .field("stream", &format_args!("{}", core::any::type_name::<S>()))
             .finish()
     }
 }
@@ -330,12 +330,12 @@ impl Event {
         T: serde_core::Serialize,
     {
         struct JsonWriter<'a>(&'a mut EventDataWriter);
-        impl std::io::Write for JsonWriter<'_> {
+        impl core::io::Write for JsonWriter<'_> {
             #[inline]
-            fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+            fn write(&mut self, buf: &[u8]) -> core::io::Result<usize> {
                 Ok(self.0.write_buf(buf))
             }
-            fn flush(&mut self) -> std::io::Result<()> {
+            fn flush(&mut self) -> core::io::Result<()> {
                 Ok(())
             }
         }
@@ -526,7 +526,7 @@ impl EventDataWriter {
         let pending_cr = mem::take(&mut self.pending_cr);
         let buffer = self.event.buffer.as_mut();
 
-        if !std::mem::replace(&mut self.data_written, true) {
+        if !core::mem::replace(&mut self.data_written, true) {
             if self.event.flags.contains(EventFlags::HAS_DATA) {
                 panic!("Called `Event::data*` multiple times");
             }
@@ -703,7 +703,7 @@ where
     type Item = Result<Event, E>;
 
     fn poll_next(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
-        use std::future::Future;
+        use core::future::Future;
 
         let mut this = self.as_mut().project();
 
@@ -732,6 +732,9 @@ where
 mod tests {
     use super::*;
     use crate::{routing::get, test_helpers::*, Router};
+    use alloc::borrow::ToOwned as _;
+    use alloc::string::String;
+    use alloc::vec;
     use futures_util::stream;
     use serde_json::value::RawValue;
     use std::{collections::HashMap, convert::Infallible};

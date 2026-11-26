@@ -1,12 +1,12 @@
 use bytes::Buf;
-use http_body::{Body, Frame, SizeHint};
-use std::{
+use core::{
     convert::Infallible,
     fmt,
     marker::PhantomData,
     pin::Pin,
     task::{Context, Poll},
 };
+use http_body::{Body, Frame, SizeHint};
 
 /// Refer to the documentation of [`super::Body::unknown`] which is `pub`.
 pub(crate) struct Unknown<D> {

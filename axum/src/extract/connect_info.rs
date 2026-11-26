@@ -7,8 +7,7 @@
 use crate::extension::AddExtension;
 
 use super::{Extension, FromRequestParts};
-use http::request::Parts;
-use std::{
+use core::{
     convert::Infallible,
     fmt,
     future::ready,
@@ -16,6 +15,7 @@ use std::{
     net::SocketAddr,
     task::{Context, Poll},
 };
+use http::request::Parts;
 use tower_layer::Layer;
 use tower_service::Service;
 
@@ -120,7 +120,7 @@ where
 opaque_future! {
     /// Response future for [`IntoMakeServiceWithConnectInfo`].
     pub type ResponseFuture<S, C> =
-        std::future::Ready<Result<AddExtension<S, ConnectInfo<C>>, Infallible>>;
+        core::future::Ready<Result<AddExtension<S, ConnectInfo<C>>, Infallible>>;
 }
 
 /// Extractor for getting connection information produced by a [`Connected`].
@@ -223,6 +223,8 @@ mod tests {
         extract::connect_info::Connected, routing::get, serve::IncomingStream, serve::Listener,
         test_helpers::TestClient, Router,
     };
+    use alloc::format;
+    use alloc::string::String;
     use tokio::net::{TcpListener, TcpStream};
 
     #[test]

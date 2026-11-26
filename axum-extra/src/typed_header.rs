@@ -1,12 +1,13 @@
 //! Extractor and response for typed headers.
 
+use alloc::string::ToString as _;
 use axum_core::{
     extract::{FromRequestParts, OptionalFromRequestParts},
     response::{IntoResponse, IntoResponseParts, Response, ResponseParts},
 };
+use core::convert::Infallible;
 use headers::{Header, HeaderMapExt};
 use http::{request::Parts, StatusCode};
-use std::convert::Infallible;
 
 /// Extractor and response that works with typed header values from [`headers`].
 ///
@@ -189,8 +190,8 @@ impl IntoResponse for TypedHeaderRejection {
     }
 }
 
-impl std::fmt::Display for TypedHeaderRejection {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for TypedHeaderRejection {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match &self.reason {
             TypedHeaderRejectionReason::Missing => {
                 write!(f, "Header of type `{}` was missing", self.name)
@@ -202,8 +203,8 @@ impl std::fmt::Display for TypedHeaderRejection {
     }
 }
 
-impl std::error::Error for TypedHeaderRejection {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+impl core::error::Error for TypedHeaderRejection {
+    fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
         match &self.reason {
             TypedHeaderRejectionReason::Error(err) => Some(err),
             TypedHeaderRejectionReason::Missing => None,
@@ -215,6 +216,8 @@ impl std::error::Error for TypedHeaderRejection {
 mod tests {
     use super::*;
     use crate::test_helpers::*;
+    use alloc::format;
+    use alloc::vec::Vec;
     use axum::{routing::get, Router};
     use http::StatusCode;
 

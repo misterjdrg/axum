@@ -1,7 +1,7 @@
 use super::{FromRequest, FromRequestParts, Request};
 use crate::response::{IntoResponse, Response};
+use core::{convert::Infallible, future::Future};
 use http::request::Parts;
-use std::{convert::Infallible, future::Future};
 
 #[diagnostic::do_not_recommend]
 impl<S> FromRequestParts<S> for ()

@@ -12,10 +12,11 @@ use crate::{
     response::Response,
     routing::{future::RouteFuture, Fallback, MethodFilter, Route},
 };
+use alloc::borrow::Cow;
+use alloc::format;
 use axum_core::{extract::Request, response::IntoResponse, BoxError};
 use bytes::BytesMut;
-use std::{
-    borrow::Cow,
+use core::{
     convert::Infallible,
     fmt,
     task::{Context, Poll},
@@ -578,7 +579,7 @@ impl AllowHeader {
             (Self::None, Self::None) => Self::None,
             (Self::None, Self::Bytes(pick)) | (Self::Bytes(pick), Self::None) => Self::Bytes(pick),
             (mut this @ Self::Bytes(_), Self::Bytes(b)) => {
-                match std::str::from_utf8(&b) {
+                match core::str::from_utf8(&b) {
                     Ok(methods) => {
                         for method in methods.split(',') {
                             append_allow_header(&mut this, method);
@@ -1264,7 +1265,7 @@ fn append_allow_header(allow_header: &mut AllowHeader, method: &str) {
         }
         AllowHeader::Skip => {}
         AllowHeader::Bytes(allow_header) => {
-            if let Ok(s) = std::str::from_utf8(allow_header) {
+            if let Ok(s) = core::str::from_utf8(allow_header) {
                 if !s.contains(method) {
                     allow_header.extend_from_slice(b",");
                     allow_header.extend_from_slice(method.as_bytes());
@@ -1410,14 +1411,14 @@ const _: () = {
     {
         type Response = Self;
         type Error = Infallible;
-        type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+        type Future = core::future::Ready<Result<Self::Response, Self::Error>>;
 
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
 
         fn call(&mut self, _req: serve::IncomingStream<'_, L>) -> Self::Future {
-            std::future::ready(Ok(self.clone().with_state(())))
+            core::future::ready(Ok(self.clone().with_state(())))
         }
     }
 };
@@ -1426,6 +1427,7 @@ const _: () = {
 mod tests {
     use super::*;
     use crate::{extract::State, handler::HandlerWithoutStateExt};
+    use alloc::string::String;
     use http::{header::ALLOW, HeaderMap};
     use http_body_util::BodyExt;
     use std::time::Duration;

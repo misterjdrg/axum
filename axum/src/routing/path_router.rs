@@ -2,9 +2,10 @@ use crate::{
     extract::{nested_path::SetNestedPath, Request},
     handler::Handler,
 };
+use alloc::{borrow::Cow, collections::BTreeMap, format, string::String, sync::Arc, vec::Vec};
 use axum_core::response::IntoResponse;
+use core::{convert::Infallible, fmt};
 use matchit::MatchError;
-use std::{borrow::Cow, collections::HashMap, convert::Infallible, fmt, sync::Arc};
 use tower_layer::Layer;
 use tower_service::Service;
 
@@ -358,8 +359,8 @@ impl<S> Clone for PathRouter<S> {
 #[derive(Clone, Default)]
 struct Node {
     inner: matchit::Router<RouteId>,
-    route_id_to_path: HashMap<RouteId, Arc<str>>,
-    path_to_route_id: HashMap<Arc<str>, RouteId>,
+    route_id_to_path: BTreeMap<RouteId, Arc<str>>,
+    path_to_route_id: BTreeMap<Arc<str>, RouteId>,
 }
 
 impl Node {

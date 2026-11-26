@@ -1,7 +1,8 @@
 use crate::util::PercentDecodedStr;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
 use http::Extensions;
 use matchit::Params;
-use std::sync::Arc;
 
 #[derive(Clone)]
 pub(crate) enum UrlParams {

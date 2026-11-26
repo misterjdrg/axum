@@ -7,9 +7,13 @@
 //! [`IntoResponse`]: crate::response::IntoResponse
 //! [`axum`]: https://crates.io/crates/axum
 //! [`axum-core`]: http://crates.io/crates/axum-core
-
+#![no_std]
 #![cfg_attr(test, allow(clippy::float_cmp))]
 #![cfg_attr(not(test), warn(clippy::print_stdout, clippy::dbg_macro))]
+
+extern crate alloc;
+
+use alloc::boxed::Box;
 
 #[macro_use]
 pub(crate) mod macros;
@@ -21,6 +25,7 @@ pub mod __private {
 
 mod error;
 mod ext_traits;
+
 pub use self::error::Error;
 
 pub mod body;
@@ -28,7 +33,7 @@ pub mod extract;
 pub mod response;
 
 /// Alias for a type-erased error type.
-pub type BoxError = Box<dyn std::error::Error + Send + Sync>;
+pub type BoxError = Box<dyn core::error::Error + Send + Sync>;
 
 pub use self::ext_traits::{request::RequestExt, request_parts::RequestPartsExt};
 

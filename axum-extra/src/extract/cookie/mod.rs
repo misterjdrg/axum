@@ -8,16 +8,18 @@
 //! refer to the `key-expansion` feature. In `axum-extra`, enable **`cookie-key-expansion`**
 //! instead (see the [crate-level feature list](crate#feature-flags)).
 
+use alloc::borrow::ToOwned as _;
+use alloc::string::ToString as _;
 use axum_core::{
     extract::FromRequestParts,
     response::{IntoResponse, IntoResponseParts, Response, ResponseParts},
 };
+use core::convert::Infallible;
 use http::{
     header::{COOKIE, SET_COOKIE},
     request::Parts,
     HeaderMap,
 };
-use std::convert::Infallible;
 
 #[cfg(feature = "cookie-private")]
 mod private;
@@ -242,6 +244,7 @@ fn set_cookies(jar: &cookie::CookieJar, headers: &mut HeaderMap) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::string::String;
     use axum::{body::Body, extract::FromRef, http::Request, routing::get, Router};
     use http_body_util::BodyExt;
     use tower::ServiceExt;
@@ -386,7 +389,7 @@ mod tests {
     async fn body_text<B>(body: B) -> String
     where
         B: axum::body::HttpBody,
-        B::Error: std::fmt::Debug,
+        B::Error: core::fmt::Debug,
     {
         let bytes = body.collect().await.unwrap().to_bytes();
         String::from_utf8(bytes.to_vec()).unwrap()

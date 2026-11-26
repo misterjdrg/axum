@@ -1,6 +1,7 @@
 //! Serve services.
 
-use std::{
+use alloc::sync::Arc;
+use core::{
     convert::Infallible,
     error::Error as StdError,
     fmt::Debug,
@@ -9,10 +10,10 @@ use std::{
     io,
     marker::PhantomData,
     pin::pin,
-    sync::Arc,
     time::Duration,
 };
 
+use alloc::boxed::Box;
 use axum_core::{body::Body, extract::Request, response::Response};
 use futures_util::{
     future::{select, Either},
@@ -287,14 +288,20 @@ fn random_duration(max: Duration) -> Duration {
         return Duration::ZERO;
     }
 
-    // Each `RandomState` is seeded with fresh random keys, so hashing empty
-    // input still yields a different value per call.
-    let rand = std::collections::hash_map::RandomState::new()
-        .build_hasher()
-        .finish();
+    #[cfg(feature = "std")]
+    {
+        // Each `RandomState` is seeded with fresh random keys, so hashing empty
+        // input still yields a different value per call.
+        let rand = std::hash::RandomState::new().build_hasher().finish();
 
-    let max_nanos = u64::try_from(max.as_nanos()).unwrap_or(u64::MAX);
-    Duration::from_nanos(rand % max_nanos.saturating_add(1))
+        let max_nanos = u64::try_from(max.as_nanos()).unwrap_or(u64::MAX);
+        return Duration::from_nanos(rand % max_nanos.saturating_add(1));
+    }
+
+    #[cfg(not(feature = "std"))]
+    {
+        max / 2
+    }
 }
 
 /// Sleeps for `duration`, or never completes if it's `None`.
@@ -304,7 +311,7 @@ fn random_duration(max: Duration) -> Duration {
 fn sleep_or_pending(duration: Option<Duration>) -> Either<tokio::time::Sleep, Pending<()>> {
     match duration {
         Some(duration) => Either::Left(tokio::time::sleep(duration)),
-        None => Either::Right(std::future::pending()),
+        None => Either::Right(core::future::pending()),
     }
 }
 
@@ -562,7 +569,7 @@ where
     M: Debug,
     E: Debug,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let Self {
             listener,
             make_service,
@@ -732,7 +739,7 @@ where
     F: Debug,
     E: Debug,
 {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         let Self {
             listener,
             make_service,
@@ -926,7 +933,7 @@ where
 }
 
 mod private {
-    use std::{
+    use core::{
         convert::Infallible,
         future::Future,
         pin::Pin,
@@ -944,8 +951,8 @@ mod private {
         }
     }
 
-    impl std::fmt::Debug for ServeFuture {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    impl core::fmt::Debug for ServeFuture {
+        fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
             f.debug_struct("ServeFuture").finish_non_exhaustive()
         }
     }
@@ -960,10 +967,12 @@ mod tests {
         time::Duration,
     };
 
+    use alloc::string::ToString as _;
     use axum_core::{body::Body, extract::Request};
     use futures_util::future::{select, Either};
     use http::{Response, StatusCode};
     use hyper_util::rt::TokioIo;
+    use std::eprintln;
     #[cfg(unix)]
     use tokio::net::UnixListener;
     use tokio::{
@@ -985,6 +994,8 @@ mod tests {
         serve::ListenerExt,
         Router, ServiceExt,
     };
+    use alloc::string::String;
+    use alloc::vec::Vec;
 
     struct ReadyListener<T>(Option<T>);
 
@@ -1196,7 +1207,7 @@ mod tests {
     impl super::Executor for TestExecutor {
         fn execute<Fut>(&self, fut: Fut) -> JoinHandle<Fut::Output>
         where
-            Fut: std::future::Future + Send + 'static,
+            Fut: core::future::Future + Send + 'static,
             Fut::Output: Send + 'static,
         {
             self.0.fetch_add(1, std::sync::atomic::Ordering::SeqCst);

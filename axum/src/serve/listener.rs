@@ -1,8 +1,8 @@
-use std::{
+use alloc::sync::Arc;
+use core::{
     fmt,
     future::Future,
     pin::Pin,
-    sync::Arc,
     task::{Context, Poll},
 };
 
@@ -33,7 +33,7 @@ pub trait Listener: Send + 'static {
 #[cfg(not(target_arch = "wasm32"))]
 impl Listener for tokio::net::TcpListener {
     type Io = tokio::net::TcpStream;
-    type Addr = std::net::SocketAddr;
+    type Addr = core::net::SocketAddr;
 
     async fn accept(&mut self) -> (Self::Io, Self::Addr) {
         loop {
@@ -200,7 +200,7 @@ impl<T: AsyncWrite> AsyncWrite for ConnLimiterIo<T> {
     fn poll_write_vectored(
         self: Pin<&mut Self>,
         cx: &mut Context<'_>,
-        bufs: &[std::io::IoSlice<'_>],
+        bufs: &[core::io::IoSlice<'_>],
     ) -> Poll<io::Result<usize>> {
         self.project().io.poll_write_vectored(cx, bufs)
     }
@@ -262,7 +262,7 @@ async fn handle_accept_error(e: io::Error) {
     //
     // hyper allowed customizing this but axum does not.
     error!("accept error: {e}");
-    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    tokio::time::sleep(core::time::Duration::from_secs(1)).await;
 }
 
 #[cfg(not(target_arch = "wasm32"))]

@@ -2,16 +2,17 @@ use crate::{
     extract::FromRequestParts,
     response::{IntoResponse, Response},
 };
-use futures_core::future::BoxFuture;
-use http::Request;
-use pin_project_lite::pin_project;
-use std::{
+use alloc::boxed::Box;
+use core::{
     fmt,
     future::Future,
     marker::PhantomData,
     pin::Pin,
     task::{ready, Context, Poll},
 };
+use futures_core::future::BoxFuture;
+use http::Request;
+use pin_project_lite::pin_project;
 use tower_layer::Layer;
 use tower_service::Service;
 
@@ -131,7 +132,10 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("FromExtractorLayer")
             .field("state", &self.state)
-            .field("extractor", &format_args!("{}", std::any::type_name::<E>()))
+            .field(
+                "extractor",
+                &format_args!("{}", core::any::type_name::<E>()),
+            )
             .finish()
     }
 }
@@ -190,7 +194,10 @@ where
         f.debug_struct("FromExtractor")
             .field("inner", &self.inner)
             .field("state", &self.state)
-            .field("extractor", &format_args!("{}", std::any::type_name::<E>()))
+            .field(
+                "extractor",
+                &format_args!("{}", core::any::type_name::<E>()),
+            )
             .finish()
     }
 }

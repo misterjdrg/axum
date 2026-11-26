@@ -11,15 +11,15 @@ use crate::{
     handler::Handler,
     util::try_downcast,
 };
+use alloc::sync::Arc;
 use axum_core::{
     extract::Request,
     response::{IntoResponse, Response},
 };
-use std::{
+use core::{
     convert::Infallible,
     fmt,
     marker::PhantomData,
-    sync::Arc,
     task::{Context, Poll},
 };
 use tower::service_fn;
@@ -582,7 +582,7 @@ const _: () = {
     {
         type Response = Self;
         type Error = Infallible;
-        type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+        type Future = core::future::Ready<Result<Self::Response, Self::Error>>;
 
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
@@ -594,9 +594,9 @@ const _: () = {
             // only handle `serve` holds, so taking it lets `with_state` move the
             // routes instead of deep-cloning them for every connection
             if !self.finalized {
-                *self = std::mem::take(self).with_state(());
+                *self = core::mem::take(self).with_state(());
             }
-            std::future::ready(Ok(self.clone()))
+            core::future::ready(Ok(self.clone()))
         }
     }
 };

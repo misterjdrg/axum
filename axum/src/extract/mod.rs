@@ -98,6 +98,7 @@ pub(super) fn has_content_type(headers: &HeaderMap, expected_content_type: &mime
 #[cfg(test)]
 mod tests {
     use crate::{routing::get, test_helpers::*, Router};
+    use alloc::string::String;
 
     #[crate::test]
     async fn consume_body() {

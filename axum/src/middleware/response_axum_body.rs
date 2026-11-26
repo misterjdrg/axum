@@ -1,4 +1,4 @@
-use std::{
+use core::{
     error::Error,
     future::Future,
     pin::Pin,

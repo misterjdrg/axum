@@ -1,9 +1,10 @@
 use super::{IntoResponse, Response};
+use alloc::string::ToString as _;
+use core::{convert::Infallible, fmt};
 use http::{
     header::{HeaderMap, HeaderName, HeaderValue},
     Extensions, StatusCode,
 };
-use std::{convert::Infallible, fmt};
 
 /// Trait for adding headers and extensions to a response.
 ///
@@ -227,12 +228,12 @@ impl<K, V> fmt::Display for TryIntoHeaderError<K, V> {
     }
 }
 
-impl<K, V> std::error::Error for TryIntoHeaderError<K, V>
+impl<K, V> core::error::Error for TryIntoHeaderError<K, V>
 where
-    K: std::error::Error + 'static,
-    V: std::error::Error + 'static,
+    K: core::error::Error + 'static,
+    V: core::error::Error + 'static,
 {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+    fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
         match &self.kind {
             TryIntoHeaderErrorKind::Key(inner) => Some(inner),
             TryIntoHeaderErrorKind::Value(inner) => Some(inner),

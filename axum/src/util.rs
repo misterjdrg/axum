@@ -1,12 +1,12 @@
+use alloc::sync::Arc;
 use axum_core::response::{IntoResponse, Response};
-use pin_project_lite::pin_project;
-use std::{
+use core::{
     future::Future,
     ops::Deref,
     pin::Pin,
-    sync::Arc,
     task::{ready, Context, Poll},
 };
+use pin_project_lite::pin_project;
 use tower::Service;
 
 /// Deserializes a `T`, and only if that fails does it again through `serde_path_to_error` to report
@@ -117,7 +117,7 @@ where
     K: Send + 'static,
 {
     let mut k = Some(k);
-    if let Some(k) = <dyn std::any::Any>::downcast_mut::<Option<T>>(&mut k) {
+    if let Some(k) = <dyn core::any::Any>::downcast_mut::<Option<T>>(&mut k) {
         Ok(k.take().unwrap())
     } else {
         Err(k.unwrap())

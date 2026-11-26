@@ -5,7 +5,8 @@ use crate::{
     http::Request,
     response::{IntoResponse, Response},
 };
-use std::{
+use alloc::boxed::Box;
+use core::{
     convert::Infallible,
     fmt,
     future::Future,
@@ -50,7 +51,7 @@ where
 impl<F, E> fmt::Debug for HandleErrorLayer<F, E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("HandleErrorLayer")
-            .field("f", &format_args!("{}", std::any::type_name::<F>()))
+            .field("f", &format_args!("{}", core::any::type_name::<F>()))
             .finish()
     }
 }
@@ -107,7 +108,7 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("HandleError")
             .field("inner", &self.inner)
-            .field("f", &format_args!("{}", std::any::type_name::<F>()))
+            .field("f", &format_args!("{}", core::any::type_name::<F>()))
             .finish()
     }
 }
@@ -135,7 +136,7 @@ where
         let f = self.f.clone();
 
         let clone = self.inner.clone();
-        let inner = std::mem::replace(&mut self.inner, clone);
+        let inner = core::mem::replace(&mut self.inner, clone);
 
         let future = Box::pin(async move {
             match inner.oneshot(req).await {
@@ -178,7 +179,7 @@ macro_rules! impl_service {
                 let f = self.f.clone();
 
                 let clone = self.inner.clone();
-                let inner = std::mem::replace(&mut self.inner, clone);
+                let inner = core::mem::replace(&mut self.inner, clone);
 
                 let (mut parts, body) = req.into_parts();
 
@@ -225,13 +226,14 @@ pub mod future {
     //! Future types.
 
     use crate::response::Response;
-    use pin_project_lite::pin_project;
-    use std::{
+    use alloc::boxed::Box;
+    use core::{
         convert::Infallible,
         future::Future,
         pin::Pin,
         task::{Context, Poll},
     };
+    use pin_project_lite::pin_project;
 
     pin_project! {
         /// Response future for [`HandleError`].

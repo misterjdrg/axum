@@ -1,6 +1,6 @@
 use super::{Extension, FromRequestParts};
+use core::convert::Infallible;
 use http::{request::Parts, Uri};
-use std::convert::Infallible;
 
 /// Extractor that gets the original request URI regardless of nesting.
 ///

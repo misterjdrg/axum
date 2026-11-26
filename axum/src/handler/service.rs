@@ -5,13 +5,13 @@ use crate::extract::connect_info::IntoMakeServiceWithConnectInfo;
 use crate::response::Response;
 use crate::routing::IntoMakeService;
 use crate::BoxError;
-use http::Request;
-use std::{
+use core::{
     convert::Infallible,
     fmt,
     marker::PhantomData,
     task::{Context, Poll},
 };
+use http::Request;
 use tower_service::Service;
 
 /// An adapter that makes a [`Handler`] into a [`Service`].
@@ -188,14 +188,14 @@ const _: () = {
     {
         type Response = Self;
         type Error = Infallible;
-        type Future = std::future::Ready<Result<Self::Response, Self::Error>>;
+        type Future = core::future::Ready<Result<Self::Response, Self::Error>>;
 
         fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
 
         fn call(&mut self, _req: serve::IncomingStream<'_, L>) -> Self::Future {
-            std::future::ready(Ok(self.clone()))
+            core::future::ready(Ok(self.clone()))
         }
     }
 };

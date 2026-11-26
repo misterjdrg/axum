@@ -1,9 +1,10 @@
 use super::{rejection::*, FromRequest, FromRequestParts, Request};
 use crate::{body::Body, RequestExt};
+use alloc::string::String;
 use bytes::{BufMut, Bytes, BytesMut};
+use core::convert::Infallible;
 use http::{request::Parts, Extensions, HeaderMap, Method, Uri, Version};
 use http_body_util::BodyExt;
-use std::convert::Infallible;
 
 impl<S> FromRequest<S> for Request
 where

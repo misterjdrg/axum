@@ -4,8 +4,8 @@ use axum_core::{
     response::{IntoResponse, IntoResponseParts, Response, ResponseParts},
 };
 use cookie::PrivateJar;
+use core::{convert::Infallible, fmt, marker::PhantomData};
 use http::{request::Parts, HeaderMap};
-use std::{convert::Infallible, fmt, marker::PhantomData};
 
 /// Extractor that grabs private cookies from the request and manages the jar.
 ///

@@ -1,8 +1,7 @@
 use crate::response::{IntoResponse, Response};
+use alloc::boxed::Box;
 use axum_core::extract::FromRequestParts;
-use futures_core::future::BoxFuture;
-use http::Request;
-use std::{
+use core::{
     any::type_name,
     convert::Infallible,
     fmt,
@@ -11,6 +10,8 @@ use std::{
     pin::Pin,
     task::{Context, Poll},
 };
+use futures_core::future::BoxFuture;
+use http::Request;
 use tower_layer::Layer;
 use tower_service::Service;
 
@@ -257,7 +258,7 @@ macro_rules! impl_service {
 
             fn call(&mut self, req: Request<B>) -> Self::Future {
                 let not_ready_inner = self.inner.clone();
-                let mut ready_inner = std::mem::replace(&mut self.inner, not_ready_inner);
+                let mut ready_inner = core::mem::replace(&mut self.inner, not_ready_inner);
 
                 let mut f = self.f.clone();
                 let _state = self.state.clone();

@@ -4,6 +4,9 @@ use serde_json::{json, Value};
 use std::sync::Arc;
 use tower::limit::ConcurrencyLimitLayer;
 
+use alloc::format;
+use std::println;
+
 #[crate::test]
 async fn basic() {
     let one = Router::new()

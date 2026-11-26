@@ -1,6 +1,7 @@
 use super::FromRequestParts;
+use alloc::{borrow::ToOwned, string::String};
+use core::convert::Infallible;
 use http::request::Parts;
-use std::convert::Infallible;
 
 /// Extractor that extracts the raw query string, without parsing it.
 ///

@@ -1,5 +1,7 @@
 use crate::extract::Request;
 use crate::extract::{rejection::*, FromRequest};
+use alloc::string::ToString as _;
+use alloc::vec::Vec;
 use axum_core::extract::OptionalFromRequest;
 use axum_core::response::{IntoResponse, IntoResponseFailed, Response};
 use bytes::Bytes;
@@ -236,8 +238,11 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::println;
+
     use super::*;
     use crate::{routing::post, test_helpers::*, Router};
+    use alloc::string::String;
     use serde::Deserialize;
     use serde_json::{json, Value};
 

@@ -5,9 +5,9 @@
 //! [`axum::extract`]: https://docs.rs/axum/0.8/axum/extract/index.html
 
 use crate::{body::Body, response::IntoResponse};
+use core::convert::Infallible;
+use core::future::Future;
 use http::request::Parts;
-use std::convert::Infallible;
-use std::future::Future;
 
 pub mod rejection;
 

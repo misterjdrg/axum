@@ -51,7 +51,8 @@ use crate::{
     response::{IntoResponse, Response},
     routing::IntoMakeService,
 };
-use std::{convert::Infallible, fmt, future::Future, marker::PhantomData, pin::Pin};
+use alloc::boxed::Box;
+use core::{convert::Infallible, fmt, future::Future, marker::PhantomData, pin::Pin};
 use tower::ServiceExt;
 use tower_layer::Layer;
 use tower_service::Service;
@@ -273,10 +274,10 @@ impl<T, S> Handler<private::IntoResponseHandler, S> for T
 where
     T: IntoResponse + Clone + Send + Sync + 'static,
 {
-    type Future = std::future::Ready<Response>;
+    type Future = core::future::Ready<Response>;
 
     fn call(self, _req: Request, _state: S) -> Self::Future {
-        std::future::ready(self.into_response())
+        core::future::ready(self.into_response())
     }
 }
 
@@ -402,6 +403,8 @@ where
 mod tests {
     use super::*;
     use crate::{extract::State, test_helpers::*};
+    use alloc::format;
+    use alloc::string::String;
     use axum_core::body::Body;
     use http::StatusCode;
     use std::time::Duration;

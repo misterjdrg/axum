@@ -1,3 +1,5 @@
+use alloc::string::ToString as _;
+use alloc::vec::Vec;
 use std::sync::{
     atomic::{AtomicBool, AtomicUsize, Ordering},
     Arc,
@@ -43,7 +45,7 @@ impl Clone for CountingCloneableState {
                 .filter(|line| line.contains("axum") || line.contains("./src"))
                 .collect::<Vec<_>>()
                 .join("\n");
-            println!("AppState::Clone:\n===============\n{bt}\n");
+            std::println!("AppState::Clone:\n===============\n{bt}\n");
             state.count.fetch_add(1, Ordering::SeqCst);
         }
 

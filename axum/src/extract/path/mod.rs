@@ -10,14 +10,19 @@ use crate::{
     routing::url_params::UrlParams,
     util::PercentDecodedStr,
 };
+use alloc::format;
+use alloc::string::String;
+use alloc::string::ToString as _;
+use alloc::sync::Arc;
+use alloc::vec::Vec;
 use axum_core::{
     extract::OptionalFromRequestParts,
     response::{IntoResponse, Response},
     RequestPartsExt as _,
 };
+use core::fmt;
 use http::{request::Parts, Extensions, StatusCode};
 use serde_core::de::DeserializeOwned;
-use std::{fmt, sync::Arc};
 
 /// Extractor that will get captures from the URL and parse them using
 /// [`serde`].
@@ -257,7 +262,7 @@ impl fmt::Display for PathDeserializationError {
     }
 }
 
-impl std::error::Error for PathDeserializationError {}
+impl core::error::Error for PathDeserializationError {}
 
 /// The kinds of errors that can happen we deserializing into a [`Path`].
 ///
@@ -460,7 +465,7 @@ impl fmt::Display for FailedToDeserializePathParams {
     }
 }
 
-impl std::error::Error for FailedToDeserializePathParams {}
+impl core::error::Error for FailedToDeserializePathParams {}
 
 /// Extractor that will get captures from the URL without deserializing them.
 ///
@@ -541,7 +546,7 @@ impl<'a> IntoIterator for &'a RawPathParams {
 ///
 /// Created with [`RawPathParams::iter`].
 #[derive(Debug)]
-pub struct RawPathParamsIter<'a>(std::slice::Iter<'a, (Arc<str>, PercentDecodedStr)>);
+pub struct RawPathParamsIter<'a>(core::slice::Iter<'a, (Arc<str>, PercentDecodedStr)>);
 
 impl<'a> Iterator for RawPathParamsIter<'a> {
     type Item = (&'a str, &'a str);
@@ -579,7 +584,7 @@ impl fmt::Display for InvalidUtf8InPathParam {
     }
 }
 
-impl std::error::Error for InvalidUtf8InPathParam {}
+impl core::error::Error for InvalidUtf8InPathParam {}
 
 impl IntoResponse for InvalidUtf8InPathParam {
     fn into_response(self) -> Response {
@@ -627,8 +632,10 @@ where
 mod tests {
     use super::*;
     use crate::{routing::get, test_helpers::*, Router};
+    use alloc::borrow::ToOwned as _;
     use serde::Deserialize;
     use std::collections::HashMap;
+    use std::vec;
 
     #[crate::test]
     async fn extracting_url_params() {

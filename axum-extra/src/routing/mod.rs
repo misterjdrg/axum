@@ -1,13 +1,16 @@
 //! Additional types for defining routes.
 
+use alloc::borrow::Cow;
+use alloc::format;
+use alloc::string::ToString as _;
 use axum::{
     extract::{OriginalUri, Request},
     response::{IntoResponse, Redirect, Response},
     routing::{any, on, MethodFilter, MethodRouter},
     Router,
 };
+use core::convert::Infallible;
 use http::{uri::PathAndQuery, StatusCode, Uri};
-use std::{borrow::Cow, convert::Infallible};
 use tower_service::Service;
 
 mod resource;
@@ -493,6 +496,7 @@ mod sealed {
 mod tests {
     use super::*;
     use crate::test_helpers::*;
+    use alloc::string::String;
     use axum::{
         extract::Path,
         routing::{get, post},
